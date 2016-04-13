@@ -1,0 +1,167 @@
+\documentclass[11pt,CJK]{cctart}
+
+%\usepackage{CJK}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{epstopdf}
+\usepackage{subfigure}
+%\usepackage[titletoc]{appendix}
+\usepackage{listings}
+\usepackage{palatino}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{color}
+%\usepackage{mwe}
+%\usepackage{newtxtext}
+%\usepackage{caption}
+\captionsetup{font=small,labelfont=bf,textfont=it,labelsep=period,position=bottom}
+\captionsetup[figure]{name=Fig.}
+\bibliographystyle{IEEEtran}
+\usepackage[toc,page]{appendix}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{amsmath}
+\usepackage{geometry}  % 设置页边距
+\usepackage{fancyhdr}  % 设置页眉页脚
+\usepackage{indentfirst}  % 首行缩进
+\usepackage{setspace}  % 行间距
+
+%\bibliographystyle{unsrt}
+
+%\tableofcontents
+%\usepackage{color}
+%\usepackage[dvips]{color}
+%\usepackage{epic,eepic}
+
+
+% 设置页边距，纸的长度为20cm,宽度为15cm，左边距1cm，右边距2cm、上边距3cm、下边距4cm
+%\geometry{papersize={20cm,30cm}}
+\geometry{left=3cm,right=3cm,top=2cm,bottom=2cm}
+
+% 在页眉左边写上我的名字，中间写上今天的日期，右边写上我的电话；页脚的正中写上页码；页眉和正文直接有一道宽为0.4pt的横线分割，可以在导言区加上如下几行
+\pagestyle{fancy}
+\lhead{\author}
+\chead{\date}
+\rhead{\center write by 风车自由}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headwidth}{\textwidth}
+\renewcommand{\footrulewidth}{0pt}
+
+
+% 首行缩进2个中文字
+\setlength{\parindent}{2.45em}
+
+% 行间距
+\onehalfspacing
+
+% 段间距
+\addtolength{\parskip}{.4em}
+
+% 题目
+
+\title{ R语言应用 \\ \huge 随机数  $\colon$ 那些函数
+}
+
+% 作者
+\author{风车自由}
+
+
+
+
+\begin{document}
+%\begin{CJK}{GBK}{song}
+
+%\begin{CJK}{GBK}{song}
+
+
+% 时间
+\date{\today}
+
+\maketitle
+
+% 新的一页
+\newpage
+
+\tableofcontents
+% 摘要部分
+
+% 新的一页
+\newpage
+
+
+\begin{abstract}
+  常见产生各种分布的随机函数，这里将给出函数及其语法规则，若干案例！
+
+  给出的函数有：
+  \footnote{r - 生成相应分布的随机数;
+            d - 生成相应分布的密度函数;
+            p - 生成相应分布的累积概率密度函数;
+            q - 生成相应分布的分位数函数。
+  }
+
+  \begin{itemize}
+
+	\item 均匀分布, runif
+	\item 正态分布，rnorm
+	\item 二项分布，rbinom
+    \item 指数分布，rexp
+    \item 贝塔分布，beta
+    \item 柯西分布，rcauchy
+    \item F分布，rf
+    \item 伽马分布，rgamma
+    \item 几何分布，rgeom
+    \item 逻辑分布，rlogis
+    \item 负二项分布，rnbinom
+    \item 泊松分布，rpois
+    \item 威尔考克森分布，rwilcox
+\end{itemize}
+% 关键字
+
+\textbf{keywords:} R语言  ; 随机函数; CTEX
+\end{abstract}
+
+
+
+% 新的一页
+\newpage
+
+
+\section{均匀分布}
+
+
+       \begin{algorithm}
+    \begin{algorithmic}
+    % 这里使用algorithm和algorithmic 是为了增加上下线
+    \textbf{\textcolor[rgb]{0.98,0.00,0.00} {均匀分布}}
+    \lstinputlisting[language=R]{./CODE/1.R}
+     \end{algorithmic}
+     \end{algorithm}
+
+\section{二项分布}
+
+
+	%\item 二项分布，rbinom
+    %\item 指数分布，rexp
+    %\item 贝塔分布，beta
+%    \item 柯西分布，rcauchy
+%    \item F分布，rf
+%    \item 伽马分布，rgamma
+%    \item 几何分布，rgeom
+%    \item 逻辑分布，rlogis
+%    \item 负二项分布，rnbinom
+%    \item 泊松分布，rpois
+%    \item 威尔考克森分布，rwilcox
+
+
+%\end{CJK}
+
+
+
+
+
+\end{document}
