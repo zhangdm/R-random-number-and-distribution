@@ -1,0 +1,342 @@
+%this file is for the code ,such as R language and matlab.
+%here we just use R language.
+
+
+# # =========== grammer ====# #
+dunif(x, min = 0, max = 1, log = FALSE)
+
+punif(q, min = 0, max = 1, lower.tail = TRUE, log.p = FALSE)  
+
+qunif(p, min = 0, max = 1, lower.tail = TRUE, log.p = FALSE)
+
+runif(n, min = 0, max = 1) 
+
+# # =========example ==========# #
+u <- runif(20)
+
+## The following relations always hold :
+punif(u) == u
+dunif(u) == 1
+var(runif(10000))  #- ~ = 1/12 = .08333
+
+
+
+
+
+# # =============== grammer ======= # #
+dbinom(x, size, prob, log = FALSE)
+
+pbinom(q, size, prob, lower.tail = TRUE, log.p = FALSE)
+
+qbinom(p, size, prob, lower.tail = TRUE, log.p = FALSE)
+
+rbinom(n, size, prob)
+
+# # ============== example ============ # #
+require(graphics)
+# # Compute P(45 < X < 55) for X Binomial(100,0.5)
+sum(dbinom(46:54, 100, 0.5))
+
+# # Using "log = TRUE" for an extended range :
+n <- 2000
+k <- seq(0, n, by = 20)
+plot (k, dbinom(k, n, pi/10, log = TRUE), type = "l", ylab = "log density",
+      main = "dbinom(*, log=TRUE) is better than  log(dbinom(*))")
+lines(k, log(dbinom(k, n, pi/10)), col = "red", lwd = 2)
+# # extreme points are omitted since dbinom gives 0.
+mtext("dbinom(k, log=TRUE)", adj = 0)
+mtext("extended range", adj = 0, line = -1, font = 4)
+mtext("log(dbinom(k))", col = "red", adj = 1)
+
+
+
+
+
+
+function [H_star] = TSOCD_main(PPI_profie, gene_expression_profile, T, delta, tau, lambda, beta, K, repeat_times, iter, rho)
+% The core function of this paper. It detects protein complexes from a set
+% of given dynamic PPI networks with adjacent matrices A{t} and an adjacency
+% matrix of stable interactions S.
+
+% Input:
+%   PPI_profile: the input file name of the PPI network, where each line
+%   contains two proteins defining the interaction between them (seperated by tab).
+%   Example: YAL064W-B	YPR126C
+%   gene_expression_profile: the input file name of the time-course gene expression, where each line
+%   contains a protein and its gene expression across different time points (seperated by tab).
+%   Example: YNL079C	0.15 0.25бнбн
+%   T: the number of time points.
+%   delta: the cut-off threshold to distinguish stable interactions from transient interactions.
+%	tau: the threshold used to obtain protein complexes from estimator of H. The default
+%   value is 0.3.
+%   lambda: parameter which controls the effect of smooth regularization. The default value
+%   is 2^(-4).
+%   beta: parameter which controls the effect of low rank constrain. The
+%   default value is 2^4.
+%   K: maximum number of possible protein complexes. The default value is
+%   1000.
+%   repeat_times: the number of times that we repeat the entire calculation
+%   to avoid local minimum. The default value is 10.
+%   iter: the number of iterations limited in TSOCD. The default value is 200.
+%   rho: the tolerance threshold of the stop criterion. The default
+%   value is 1e-6.
+
+
+% Outputs:
+%   H_star: the protein-complex membership indication matrix.
+
+
+
+if nargin < 11
+    rho = 1e-6;
+end
+
+if nargin < 10
+    iter = 200;
+end
+
+if nargin < 9
+    repeat_times = 10;
+end
+
+if nargin < 8
+    K = 1000;
+end
+
+if nargin < 7
+    beta = 2^4;
+end
+
+if nargin < 6
+    lambda = 2^(-4);
+end
+
+if nargin < 5
+    tau = 0.3;
+end
+
+if nargin < 4
+    delta = 0.3;
+end
+
+if nargin < 3
+    error('You need input A, S, and T');
+end
+
+%delta = str2double(delta);
+%T = str2double(T);
+%lambda = str2double(lambda);
+%beta = str2double(beta);
+%K = str2double(K);
+%repeat_times = str2double(repeat_times);
+%iter = str2double(iter);
+%rho = str2double(rho);
+%tau = str2double(tau);
+
+% generate dynamic PPI networks
+Data_set = dynamic_network_generation(PPI_profie, gene_expression_profile, delta);
+% temporal protein complex detection
+[H_star, ~, ~] = TSOCD(Data_set, Data_set.stable, T, lambda, beta, K, repeat_times, iter, rho, tau);
+
+
+
+
+
+
+%%  matlab   %%%
+
+function [H_star, H, score] = TSOCD(Data_set, S, T, lambda, beta, K, repeat_times, iter, rho, tau)
+
+% Estimate model parameters H by updating them
+% according to Equations (12), (13) and (14) alternately. It repeats the entire
+% updating procedure multiple times and chooses the result that gives
+% the lowest value of objective function in Equation (1) as the final estimator.
+
+
+% Input:
+%   Data_set: a structure, which include the static PPI network, dynamic
+%   PPI networks and normalized gene expression. 
+%   S: the adjacency matrix of stable interactions in the network under consideration.
+%      S(i,j)=1 if the interaction between protein i and j is stable
+%      interaction, and S(i,j)=0 otherwise.
+%   T: number of time points.
+%   lambda: parameter which controls the effect of smooth regularization. The default value
+%   is 2^(-4).
+%   beta: parameter which controls the effect of low rank constrain. The
+%   default value is 2^4.
+%   K: maximum number of possible protein complexes. The default value is
+%   1000.
+%   repeat_times: the number of times that we repeat the entire calculation
+%   to avoid local minimum. The default value is 10.
+%   iter: the number of iterations limited in TSOCD. The default value is 200.
+%   rho: the tolerance threshold of the stop criterion. The default
+%   value is 1e-6.
+%	tau: the threshold used to obtain protein complexes from estimator of H. The default
+%   value is 0.3.
+
+
+
+% Outputs:
+%   H_star: the protein-complex assignment matrices, where each H_star{t} represents
+%           the result at time point t.
+%   H: the estimator of protein-complex affinity matrices, where each H{t} represents
+%      the estimator at time point t.
+%   score: the value of objective function in Equation (1).
+
+if nargin < 10
+    tau = 0.3;
+end
+
+if nargin < 9
+    rho = 1e-6;
+end
+
+if nargin < 8
+    iter = 200;
+end
+
+if nargin < 7
+    repeat_times = 10;
+end
+
+if nargin < 6
+    K = 1000;
+end
+
+if nargin < 5
+    beta = 2^4;
+end
+
+if nargin < 4
+    lambda = 2^(-4);
+end
+
+if nargin < 3
+    error('You need input A, S and T');
+end
+
+fprintf('Estimating parameters...')
+fprintf('\n')
+
+A = Data_set.DPIN;
+N = size(A{1},1);
+
+
+lowest_score = inf;
+
+% Repeat the entire updating procedure multiple times.
+for i = 1: repeat_times
+    fprintf(['This is the ',num2str(i), '-th repeat...'])
+    fprintf('\n')
+    U = rand(N,K);
+    for t = 1 : T
+        H_old{t} = U; %Initialize matrix H randomly.
+    end
+    
+    
+    for j  = 1: iter
+        % Update H according to Equation (12).
+        H{1} = 0.5*H_old{1} + 0.5*H_old{1}.* (((A{1}./(H_old{1}*H_old{1}' + eps))*H_old{1}+ 2*lambda*(S.*(H_old{2}*H_old{2}'))*H_old{1} ) ./ (ones(N,N)*H_old{1} + beta*H_old{1} + 2*lambda*(S.*(H_old{1}*H_old{1}'))*H_old{1} + eps) );
+        for t = 2 : (T-1)
+        % Update H according to Equation (13).
+        H{t} = 0.5*H_old{t} + 0.5*H_old{t}.* (((A{t}./(H_old{t}*H_old{t}' + eps))*H_old{t}+ 2*lambda*(S.*(H_old{t+1}*H_old{t+1}') + S.*(H{t-1}*H{t-1}'))*H_old{t} ) ./ (ones(N,N)*H_old{t} + beta*H_old{t} + 4*lambda*(S.*(H_old{t}*H_old{t}'))*H_old{t} + eps) );   
+        end
+        % Update H according to Equation (14).
+        H{T} = 0.5*H_old{T} + 0.5*H_old{T}.* (((A{T}./(H_old{T}*H_old{T}' + eps))*H_old{T}+ 2*lambda*(S.*(H{T-1}*H{T-1}'))*H_old{T} ) ./ (ones(N,N)*H_old{T} + beta*H_old{T} + 2*lambda*(S.*(H_old{T}*H_old{T}'))*H_old{T} + eps) );
+        
+        if sum(sum(abs(H{1}-H_old{1}))) + sum(sum(abs(H{T}-H_old{T}))) < rho
+            break;
+        else        
+            H_old = H;
+        end
+    end
+    % Calculate the value of the objective function (1).
+    for t = 1 : (T-1)
+        s(t) = - sum(sum(A{t}.*log(H{t}*H{t}' + eps))) + sum(sum(H{t}*H{t}')) + beta*sum(sum(H{t}.*H{t})) + lambda*sum(sum((S.*(H{t+1}*H{t+1}' - H{t}*H{t}').*(H{t+1}*H{t+1}' - H{t}*H{t}'))));
+    end
+        s(T) = - sum(sum(A{T}.*log(H{T}*H{T}' + eps))) + sum(sum(H{T}*H{T}')) + beta*sum(sum(H{T}.*H{T}));
+        score = sum(s);
+       
+ 
+     
+    % Choose the results that give the lowest value of objective
+    % function.
+    if score < lowest_score
+        final_H = H;
+        lowest_score = score;
+    end
+    
+end
+H = final_H;
+score = lowest_score;
+% Detect protein complexes from the estimators of model parameters.
+% Obtain H_star according to Equation (3)
+fprintf('Detecting protein complex ...')
+fprintf('\n')
+
+for t = 1 : T
+    H_star{t} = H{t};
+    H_star{t}(H_star{t} >= tau) =1;
+    H_star{t}(H_star{t} < tau) =0;
+    
+    % Filter out the detected complexes which include less than three proteins.
+    small_size_indices = sum(H_star{t})<=2;
+    H_star{t} = H_star{t}(:,~small_size_indices);
+end
+
+for t = 1 : T
+    Dynamic_complex = H_star{t}';
+    m = size(Dynamic_complex,1);
+    filename = ['Dynamic_complex' num2str(t) '.txt'];
+    fid = fopen(filename,'w');
+for i = 1 : m
+    indice = find(Dynamic_complex(i,:) > 0);
+    for j = 1 : length(indice)
+         fprintf(fid,'%s\t',Data_set.Protein{indice(j)});
+    end
+    fprintf(fid,'\n');
+end
+fclose(fid);
+end
+
+function Data_set = dynamic_network_generation(PPI_profie, gene_expression_profile, delta)
+fprintf('Reading data...')
+fprintf('\n')
+fid_ppi=fopen(PPI_profie);
+temp_PPI=textscan(fid_ppi,'%s%s%*[^\n]','delimiter','\t');
+fclose(fid_ppi);
+
+Data_set.Protein = union(temp_PPI{1},temp_PPI{2});
+fid_expression = importdata(gene_expression_profile);
+[gene, protein_intersect,gene_intersect] = intersect(upper(Data_set.Protein),upper(fid_expression.textdata));
+Data_set.Protein = Data_set.Protein(protein_intersect);
+Data_set.Expression = fid_expression.data(gene_intersect,:);
+
+[~,Locb_1] = ismember(temp_PPI{1}, Data_set.Protein);
+[~,Locb_2] = ismember(temp_PPI{2}, Data_set.Protein);
+Data_set.PPI = sparse(Locb_1,Locb_2,1,length(Data_set.Protein),length(Data_set.Protein));
+Data_set.PPI = Data_set.PPI + Data_set.PPI';
+
+[n,T] = size(Data_set.Expression);
+if all(Data_set.Expression(:) >= 0) 
+Data_set.Expression = log10(Data_set.Expression);
+end
+for i = 1 : n
+    u(i) = mean(Data_set.Expression(i,:));
+    sigma(i) = var(Data_set.Expression(i,:));
+    F(i) = 1/(1 + sigma(i));
+    Active_Th(i) = u(i) + 3*sqrt(sigma(i))*(1 - F(i));
+end
+Data_express = zeros(n,T);
+Active_matrix = repmat(Active_Th',1,T);
+Data_express(Data_set.Expression >= Active_matrix) = 1;
+
+ Data_global_cor = corr(Data_set.Expression').*Data_set.PPI;
+ Data_global_cor(Data_global_cor >= delta) = 1;
+ Data_global_cor(Data_global_cor < delta) = 0;
+ Data_set.stable = Data_global_cor;
+for t = 1 : T
+    Dynamic_part{t} = Data_express(:,t)*Data_express(:,t)';
+    Data_set.DPIN{t} = max(Data_global_cor,Dynamic_part{t});
+    Data_set.DPIN{t} = Data_set.DPIN{t}.*Data_set.PPI;
+end
