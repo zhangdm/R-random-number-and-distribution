@@ -1,0 +1,53 @@
+install.packages('devtools') 
+install.packages("RCurl") 
+install.packages("httr")
+devtools::install_github("lchiffon/wordcloud2") 
+
+
+library(wordcloud2)  
+wordcloud2(demoFreq, size = 1,shape = 'star')  
+
+
+wordcloud2(demoFreqC, size = 2, fontFamily = "微软雅黑",  
+           color = "random-light", backgroundColor = "grey")  
+
+
+
+wordcloud2(demoFreq, size = 2, minRotation = -pi/2, maxRotation = -pi/2)  
+
+
+wordcloud2(demoFreq, size = 2, minRotation = -pi/6, maxRotation = -pi/6,  
+  rotateRatio = 1)  
+
+
+
+data <- read.csv('c:/data.csv', sep="," ,header = T)  
+#读取原始数据  
+data  
+#检查数据，查看是否存在乱码的情况  
+wordcloud2(data, size = 1, shape='star',color = 'random-dark',  
+backgroundColor = "white",fontFamily = "微软雅黑")  
+#绘制文字云，其中data就是我们读取的数据，size是对应文字大小，shape是绘制形状 
+
+
+
+
+wordcloud2(demoFreqC, size = 1,color = 'random-light',  
+backgroundColor = "gray", fontWeight='bold',fontFamily = "微软雅黑",  
+minRotation = -pi/3, maxRotation = pi/3,rotateRatio = 0.8)  
+
+
+
+#自定义图片
+
+batman = system.file("examples/t.png",package = "wordcloud2")  
+###读取形状图片，注意图片默认放在wordclou2的sample包中，浩彬老撕的路径如下："d:/Program Files/R/R-3.3.0/library/wordcloud2/examples/t.png"  
+wordcloud2(demoFreq, figPath = batman, size = 1,color = "black")  
+###绘制云此图，其中demoFreg即为所用的数据，figPath = t为所用图片    
+
+
+#文字
+letterCloud(demoFreq, word = "清", wordSize = 2,color = 'random-dark',backgroundColor = "snow")  
+###其中demoFreqC为需要用的词语以及词频数据，word是需要可视化的文字 
+
+
