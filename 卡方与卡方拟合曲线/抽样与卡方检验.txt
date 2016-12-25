@@ -1,0 +1,16 @@
+rm(list=ls())#清空所有的变量
+#1抛掷120次，即有放回的抽样
+w <- sample(c(1:6),size =120,replace=T)
+chisq.test(table(w))#卡方检验，p-value = 0.9349
+
+
+#2抽样20000次
+w1 <- sample(c(1:6),size =20000,replace=T)#样本
+chisq.test(table(w1))#卡方检验，p-value =0.06909
+hist(w1)#直方图
+w1_d <- dchisq(w1,df=5)#转为密度
+#卡方拟合图，散点的
+plot(w1,w1_d,main = "Chisq",ylim = c(0,0.3),xlab = "骰子点数",ylab = "密度")
+#卡方拟合曲线
+x=w1
+curve(dchisq(x,df=5),from = 0,to=20,main = "Chisq",ylim = c(0,0.2),xlab = "骰子点数",ylab = "密度")
