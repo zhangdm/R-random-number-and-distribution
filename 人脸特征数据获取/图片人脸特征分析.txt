@@ -1,0 +1,45 @@
+# Define image source  
+img.url = 'https://www.whitehouse.gov/sites/whitehouse.gov/files/images/first-family/44_barack_obama[1].jpg'  
+
+# Define Microsoft API URL to request data  
+faceURL = "https://api.projectoxford.ai/face/v1.0/detect?returnFaceId=true&returnFaceLandmarks=true&returnFaceAttributes=age"  
+
+# Define access key (access key is available via: https://www.microsoft.com/cognitive-services/en-us/face-api)  
+faceKEY = 'a868182e859c4458953f69dab084f5e8'  
+
+# Define image  
+mybody = list(url = img.url)  
+
+# Request data from Microsoft  
+faceResponse = POST(  
+  url = faceURL,   
+  content_type('application/json'), add_headers(.headers = c('Ocp-Apim-Subscription-Key' = faceKEY)),  
+  body = mybody,  
+  encode = 'json'  
+)  
+
+# Show request results (if Status=200, request is okay)  
+faceResponse  
+
+# Reuqest results from face analysis  
+ObamaR = httr::content(faceResponse)[[1]]  
+
+# Define results in data frame  
+OR<-as.data.frame(as.matrix(ObamaR$faceLandmarks))  
+OR  
+
+
+# Make some transformation to data frame  
+OR$V2 <- lapply(strsplit(as.character(OR$V1), "\\="), "[", 2)  
+OR$V2 <- lapply(strsplit(as.character(OR$V2), "\\,"), "[", 1)  
+colnames(OR)[2] <- "X"  
+OR$X<-as.numeric(OR$X)  
+
+OR$V3 <- lapply(strsplit(as.character(OR$V1), "\\y = "), "[", 2)  
+OR$V3 <- lapply(strsplit(as.character(OR$V3), "\\)"), "[", 1)  
+colnames(OR)[3] <- "Y"  
+OR$Y<-as.numeric(OR$Y)  
+
+OR$V1<-NULL  
+
+OR  
