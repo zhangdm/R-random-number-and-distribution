@@ -1,0 +1,62 @@
+# plots
+library(ggplot2)
+library(gridExtra)
+ 
+# number of files by type
+p1 <- ggplot(my_fls, aes(x = Type, fill = Type)) +
+    geom_bar() + 
+    ylab('Number of files') +
+    theme_bw()
+ 
+# file length by type and date
+p2 <- ggplot(my_fls, aes(x = Date, y = Length, group = Type, 
+    colour = Type)) +
+    geom_line() +
+    ylab('File length') +
+    geom_point() +
+    theme_bw() +
+    theme(legend.position = 'none')
+ 
+# density of file length by type
+p3 <- ggplot(my_fls, aes(x = Length, y = ..scaled.., group = Type, 
+    colour = Type, fill = Type)) +
+    geom_density(alpha = 0.25, size = 1) +
+    xlab('File length') +
+    ylab('Density (scaled)') +
+    theme_bw() +
+    theme(legend.position = 'none')
+ 
+# cumulative length by file type and date
+p4 <- ggplot(my_fls, aes(x = Date, y = cum_len, group = Type, 
+    colour = Type)) + 
+    geom_line() + 
+    geom_point() + 
+    ylab('Cumulative file length') +
+    theme_bw() +
+    theme(legend.position = 'none')
+ 
+# function for common legend
+# https://github.com/hadley/ggplot2/wiki/Share-a-legend-between-two-ggplot2-graphs
+g_legend<-function(a.gplot){
+  tmp <- ggplot_gtable(ggplot_build(a.gplot))
+  leg <- which(sapply(tmp$grobs, function(x) x$name) == "guide-box")
+  legend <- tmp$grobs[[leg]]
+  return(legend)}
+ 
+# get common legend, remove from p1
+mylegend <- g_legend(p1)
+p1 <- p1 + theme(legend.position = 'none')
+ 
+# final plot
+grid.arrange(
+    arrangeGrob(p1, p2, p3, p4, ncol = 2),
+    mylegend, 
+    ncol = 2, widths = c(10,1))
+	
+	
+	
+	
+# get file lengths by character
+my_fls <- file.lens(root, file_typs, lns = F)
+ 
+# re-run plot functions above
