@@ -1,0 +1,15 @@
+# import function from Github
+library(devtools)
+
+# https://gist.github.com/fawda123/20688ace86604259de4e
+#source_gist('20688ace86604259de4e')
+source("D:\\gongzuo\\zx\\github_ku\\R-statsical\\plot»­Í¼\\file_lens.R")
+
+# path to search and file types
+root <- 'D:\\gongzuo\\zx\\github_ku'  #´úÂëÄ¿Â¼
+file_typs <- c('r','py', 'tex', 'rnw')
+
+# get data from function
+my_fls <- file.lens(root, file_typs)
+
+head(my_fls)  
