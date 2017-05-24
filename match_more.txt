@@ -1,0 +1,11 @@
+value <- c()
+a <- function(b,c1){
+  for(i in 1:length(b)){
+    index_value = which(c1 == b[i])
+    value = c(value,index_value)
+    }
+  return(value)
+  }
+b <- c(2,3)
+c1 <- c(2,3,4,2,3,2,3) 
+a(b,c1)
