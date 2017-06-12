@@ -1,0 +1,11 @@
+x <- 0.3
+y <- 0.5
+sx <- 3
+sy <- 5
+nx <- 10000
+ny <- 20000
+z <- (x-y)/(sqrt(sx^2/nx + sy^2/ny))
+ 
+power <- 1 - pnorm(qnorm(1-0.05/2) - z) + pnorm(-qnorm(1-0.05/2) - z)
+power
+[1] 0.9906974
