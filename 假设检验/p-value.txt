@@ -1,0 +1,23 @@
+ # 正态分布
+ x <- 0.3
+ y <- 0.5 
+ sx <- 3
+ sy <- 5
+ nx <- 10000
+ ny <- 20000
+ z <- (x-y)/(sqrt(sx^2/nx + sy^2/ny))
+ p = 2*pnorm(-abs(z))
+ p
+ 
+ 
+ # t分布
+  m1 <- c(10)
+  m2 <- c(13)
+  sd1 <- c(3)
+  sd2 <- c(5.3)
+  num1 <- c(300)
+  num2 <- c(230)
+  se <- sqrt(sd1*sd1/num1+sd2*sd2/num2)
+  t <- (m1-m2)/se
+  p <- 2*pt(-abs(t),df=pmin(num1,num2)-1)
+  p
